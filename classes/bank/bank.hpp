@@ -2,28 +2,24 @@
 
 #include <cstdint>
 #include <iostream>
+#include <unordered_map>
+#include <vector>
 
 using namespace std;
 
 class Account {
 public:
-  Account() : id(p_id++), balance(0), name("Empty") {};
-  Account(string accountName, uint64_t passCode)
-      : id{p_id++}, pin(passCode), name{accountName}, balance{0} {};
+  Account();
+  Account(string accountName, uint64_t passCode);
 
   void deposit(uint64_t amount);
   int withdraw(uint64_t amount);
-  uint64_t getId() const { return id; }
-  string getName() const { return name; }
+  uint64_t getId() const;
+  string getName() const;
   uint64_t getBalance() const;
   bool matchPin(uint64_t passCode) const;
 
-  friend std::ostream &operator<<(std::ostream &stream, const Account &acc) {
-    stream << "ID => " << acc.id << "\t" << "Account Name => " << acc.name
-           << "\t"
-           << "Balance -> " << acc.balance << endl;
-    return stream;
-  }
+  friend std::ostream &operator<<(std::ostream &stream, const Account &acc);
 
 private:
   uint64_t id;
@@ -52,3 +48,48 @@ public:
 private:
   uint64_t fee{};
 };
+
+// -> Transaction Class <-
+class Transaction {
+public:
+  Transaction(Account &sender, Account &receiver, uint64_t transferAmount);
+
+  friend ostream &operator<<(ostream &stream, const Transaction &transac);
+
+private:
+  uint64_t id;
+  uint64_t from;
+  uint64_t to;
+  uint64_t amount;
+
+  inline static uint64_t p_id = 0;
+};
+// -> Transaction Class <-
+
+// -> Bank Class<-
+class Bank {
+
+public:
+  Bank();
+
+  void newAccount(string accountName, uint64_t initialDesposit);
+  void transferMoney(uint64_t sender, uint64_t receiver, uint64_t amount);
+  Account &getAccountById(uint64_t id);
+
+  void displayOptions();
+  void loginAccount();
+  bool isLoggedIn();
+  Account &getLoggedInAccount();
+
+  void logOut();
+  void displayTransactions();
+  void deleteAccount(uint64_t id);
+
+private:
+  uint64_t totalAccounts{};
+  uint64_t loggedIn = 0;
+  unordered_map<uint64_t, Account> map;
+  vector<Transaction> transactions;
+};
+
+// -> Bank Class<-
