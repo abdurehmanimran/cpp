@@ -6,6 +6,8 @@ using namespace std;
 
 vector<int> returnGrayCodes(int n) {
   vector<int> codes(n);
+  if (n == 1)
+    return codes;
 
   codes[0] = 0;
   codes[1] = 1;
@@ -25,8 +27,9 @@ vector<int> returnGrayCodes(int n) {
       // (~(unsigned int)0) >> (32 - pos) -> gives a number for bit masking
       // e.g 00000011, 00001111, etc. (This is now removed, was in my initial
       // thought process `_`).
-      // codes[(2 * m - index - 1)] -> the prev gray code which
-      // has to be
+      // [1] => (unsigned)1 << pos) -> for attaching 1 to the left side,
+      // [2] => codes[(2 * m - index - 1)] -> the prev gray code which
+      // has to be mirrored
 
       int number = ((unsigned)1 << pos) + ((codes[(2 * m - index - 1)]));
       codes[index++] = number;
