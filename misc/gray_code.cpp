@@ -19,8 +19,16 @@ vector<int> returnGrayCodes(int n) {
         break;
 
       int pos = log2(m);
-      int number = ((unsigned)1 << pos) + (((~(unsigned int)0) >> (32 - pos) &
-                                            codes[(2 * m - index - 1)]));
+
+      // Mirroring the end digits (least-sig figs)
+      // & attaching a one to their left side
+      // (~(unsigned int)0) >> (32 - pos) -> gives a number for bit masking
+      // e.g 00000011, 00001111, etc. (This is now removed, was in my initial
+      // thought process `_`).
+      // codes[(2 * m - index - 1)] -> the prev gray code which
+      // has to be
+
+      int number = ((unsigned)1 << pos) + ((codes[(2 * m - index - 1)]));
       codes[index++] = number;
     }
     m *= 2;
