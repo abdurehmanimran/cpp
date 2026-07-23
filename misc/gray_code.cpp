@@ -1,6 +1,5 @@
 #include <cmath>
 #include <fmt/ranges.h>
-#include <iostream>
 #include <vector>
 
 using namespace std;
