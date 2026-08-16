@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ostream>
 #include <stdexcept>
+#include <sys/types.h>
 #include <vector>
 
 class Matrix;
@@ -170,6 +171,17 @@ public:
     return m;
   }
 
+  friend Matrix operator/(const Matrix &mat, const int div) {
+    Matrix finalMat{mat.n, mat.m};
+
+    for (uint row = 0; row < mat.n; row++)
+      for (uint col = 0; col < mat.m; col++) {
+        finalMat.data[row][col] = mat.data[row][col] / div;
+      }
+
+    return finalMat;
+  }
+
 private:
   uint n{};
   uint m{};
@@ -211,7 +223,7 @@ int main() {
   std::cout << mat;
 
   std::cout << "_________Adjoint___________" << std::endl;
-  std::cout << mat.adjoint();
+  std::cout << mat.adjoint() / -3;
   std::cout << "______________________________" << std::endl;
 
   return 0;
