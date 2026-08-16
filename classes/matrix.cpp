@@ -4,6 +4,9 @@
 #include <stdexcept>
 #include <vector>
 
+class Matrix;
+int64_t determinant(Matrix mat);
+
 class Matrix {
 public:
   Matrix() : n{0}, m{0} {};
@@ -56,6 +59,39 @@ public:
     }
 
     return mat;
+  }
+
+  friend int64_t determinant(Matrix mat);
+
+  Matrix transpose() {
+    Matrix mat{n, m};
+
+    uint r{0}, c{0};
+
+    for (uint row = 0; row < n; row++) {
+      for (uint col = 0; col < m; col++) {
+        mat.data[row][col] = this->data[r][c];
+        r++;
+      }
+      c++;
+      r = 0;
+    }
+
+    return mat;
+  }
+
+  Matrix adjoint() {
+    Matrix mat{n, m};
+
+    for (uint row = 0; row < n; row++)
+      for (uint col = 0; col < m; col++) {
+        int cofactor =
+            ((row + col) % 2 ? -1 : 1) * determinant(this->subMat(row, col));
+
+        mat.data[row][col] = cofactor;
+      }
+
+    return mat.transpose();
   }
 
   friend std::ostream &operator<<(std::ostream &stream, const Matrix &mat) {
@@ -134,8 +170,6 @@ public:
     return m;
   }
 
-  friend int64_t determinant(Matrix mat);
-
 private:
   uint n{};
   uint m{};
@@ -176,10 +210,9 @@ int main() {
 
   std::cout << mat;
 
-  std::cout << "_________Sub Matrix___________" << std::endl;
-  std::cout << mat.subMat(0, 0);
+  std::cout << "_________Adjoint___________" << std::endl;
+  std::cout << mat.adjoint();
   std::cout << "______________________________" << std::endl;
-  std::cout << "Determinant -> " << determinant(mat) << std::endl;
 
   return 0;
 }
