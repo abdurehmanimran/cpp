@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <ostream>
 #include <stdexcept>
@@ -31,6 +32,30 @@ public:
         std::cin >> data[i][j];
       }
     }
+  }
+
+  Matrix subMat(uint64_t row, uint64_t col) {
+    if (n == 1 || m == 1 || (n != m) || row >= n || col >= m)
+      return *this;
+
+    Matrix mat{n - 1, m - 1};
+    uint r{0}, c{0};
+
+    for (uint i = 0; i < n; i++) {
+      if (i == row)
+        continue;
+      for (uint j = 0; j < m; j++) {
+        if (j == col)
+          continue;
+
+        mat.data[r][c] = this->data[i][j];
+        c++;
+      }
+      r++;
+      c = 0;
+    }
+
+    return mat;
   }
 
   friend std::ostream &operator<<(std::ostream &stream, const Matrix &mat) {
@@ -109,6 +134,8 @@ public:
     return m;
   }
 
+  friend int64_t determinant(Matrix mat);
+
 private:
   uint n{};
   uint m{};
@@ -122,27 +149,37 @@ private:
   }
 };
 
+int64_t determinant(Matrix mat) {
+  if (mat.m != mat.n) {
+    std::cout << "Error: determinant is only a property of square matrix !!"
+              << std::endl;
+    return 0;
+  }
+
+  if (mat.n == 2 && mat.m == 2)
+    return (mat.data[0][0] * mat.data[1][1]) -
+           (mat.data[0][1] * mat.data[1][0]);
+
+  int det{0};
+
+  for (int c = 0; c < mat.m; c++) {
+    int sign = (c) % 2 ? -1 : 1; // Sign only depends on col cuz row is 0
+    det += sign * mat.data[0][c] * determinant(mat.subMat(0, c));
+  }
+
+  return det;
+}
+
 int main() {
-  Matrix mat{2, 3};
+  Matrix mat{3, 3};
   mat.getFromUser();
 
-  Matrix mat2{2, 2};
-  mat2.getFromUser();
-
-  Matrix result;
-  // try {
-  //   result = mat + mat2;
-  // } catch (std::runtime_error err) {
-  //   std::cout << "Error: " << err.what() << std::endl;
-  //   return 1;
-  // }
-
   std::cout << mat;
-  std::cout << mat2;
-  // std::cout << result;
-  std::cout << mat - mat2;
-  std::cout << "_________Product Matrix___________" << std::endl;
-  std::cout << mat * mat2;
+
+  std::cout << "_________Sub Matrix___________" << std::endl;
+  std::cout << mat.subMat(0, 0);
+  std::cout << "______________________________" << std::endl;
+  std::cout << "Determinant -> " << determinant(mat) << std::endl;
 
   return 0;
 }
