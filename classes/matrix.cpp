@@ -104,6 +104,8 @@ public:
     return (this->adjoint() / det);
   }
 
+  std::vector<double> &operator[](int64_t index) { return this->data[index]; }
+
   friend std::ostream &operator<<(std::ostream &stream, const Matrix &mat) {
     stream << "Rows -> " << mat.data.size() << "\tCols -> "
            << mat.data[0].size() << std::endl;
@@ -228,11 +230,12 @@ double determinant(Matrix mat) {
 int main() {
   Matrix mat{3, 3};
   mat.getFromUser();
+  Matrix inverse = mat.inverse();
 
   std::cout << mat << std::endl;
 
   std::cout << "\tInverse Matrix" << std::endl;
-  std::cout << mat.inverse();
+  std::cout << inverse << std::endl;
 
   return 0;
 }
