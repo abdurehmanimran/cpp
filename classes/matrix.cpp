@@ -6,7 +6,7 @@
 #include <vector>
 
 class Matrix;
-int64_t determinant(Matrix mat);
+double determinant(Matrix mat);
 
 class Matrix {
 public:
@@ -62,7 +62,7 @@ public:
     return mat;
   }
 
-  friend int64_t determinant(Matrix mat);
+  friend double determinant(Matrix mat);
 
   Matrix transpose() {
     Matrix mat{n, m};
@@ -95,13 +95,22 @@ public:
     return mat.transpose();
   }
 
+  Matrix inverse() {
+    int det = determinant(*this);
+
+    if (det == 0)
+      return *this;
+
+    return (this->adjoint() / det);
+  }
+
   friend std::ostream &operator<<(std::ostream &stream, const Matrix &mat) {
     stream << "Rows -> " << mat.data.size() << "\tCols -> "
            << mat.data[0].size() << std::endl;
     stream << "_______________________________" << std::endl;
 
-    for (std::vector<int> row : mat.data) {
-      for (int &num : row) {
+    for (std::vector<double> row : mat.data) {
+      for (double &num : row) {
         stream << num << " ";
       }
       stream << std::endl;
@@ -171,7 +180,7 @@ public:
     return m;
   }
 
-  friend Matrix operator/(const Matrix &mat, const int div) {
+  friend Matrix operator/(const Matrix &mat, const int &div) {
     Matrix finalMat{mat.n, mat.m};
 
     for (uint row = 0; row < mat.n; row++)
@@ -186,27 +195,27 @@ private:
   uint n{};
   uint m{};
 
-  std::vector<std::vector<int>> data;
+  std::vector<std::vector<double>> data;
 
   void initData() {
     for (int i = 0; i < n; i++) {
-      data.push_back(std::vector<int>(m, 0));
+      data.push_back(std::vector<double>(m, 0));
     }
   }
 };
 
-int64_t determinant(Matrix mat) {
+double determinant(Matrix mat) {
   if (mat.m != mat.n) {
     std::cout << "Error: determinant is only a property of square matrix !!"
               << std::endl;
-    return 0;
+    return 0.0;
   }
 
   if (mat.n == 2 && mat.m == 2)
     return (mat.data[0][0] * mat.data[1][1]) -
            (mat.data[0][1] * mat.data[1][0]);
 
-  int det{0};
+  double det{0};
 
   for (int c = 0; c < mat.m; c++) {
     int sign = (c) % 2 ? -1 : 1; // Sign only depends on col cuz row is 0
@@ -220,11 +229,10 @@ int main() {
   Matrix mat{3, 3};
   mat.getFromUser();
 
-  std::cout << mat;
+  std::cout << mat << std::endl;
 
-  std::cout << "_________Adjoint___________" << std::endl;
-  std::cout << mat.adjoint() / -3;
-  std::cout << "______________________________" << std::endl;
+  std::cout << "\tInverse Matrix" << std::endl;
+  std::cout << mat.inverse();
 
   return 0;
 }
